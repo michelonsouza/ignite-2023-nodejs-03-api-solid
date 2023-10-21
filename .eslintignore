@@ -1,0 +1,12 @@
+# folders
+.vscode
+node_modules
+build
+dist
+coverage
+.husky
+
+# files
+*.js
+*.env
+*.db
