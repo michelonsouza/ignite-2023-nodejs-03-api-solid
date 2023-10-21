@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "GymPass style app.",
   "main": "index.js",
+  "engines": {
+    "npm": "You must run yarn in this project",
+    "yarn": "1.22.x",
+    "node": "^18.18.2"
+  },
   "scripts": {
     "start": "node build/server.js",
     "start:dev": "tsx watch src/server.ts",
