@@ -12,7 +12,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string({
     required_error: 'DATABASE_URL environment variable is required',
   }),
-  HOST: z.string().optional().default('localhost'),
+  HOST: z.string().optional().default('0.0.0.0'),
   PORT: z.coerce.number().default(3333),
   LOGGER: z.enum(['true', 'false']).default('false'),
   NODE_ENV: z
