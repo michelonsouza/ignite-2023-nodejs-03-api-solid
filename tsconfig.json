@@ -5,6 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@lib": ["src/lib/index.ts"],
+      "@lib/*": ["src/lib/*"],
       "@env": ["src/env/index.ts"],
       "@repositories": ["src/repositories/index.ts"],
       "@repositories/*": ["src/repositories/*"],
