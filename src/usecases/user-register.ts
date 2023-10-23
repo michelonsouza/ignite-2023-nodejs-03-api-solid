@@ -4,7 +4,7 @@ import type { User, UsersRepository } from '@repositories/users-repository';
 
 import { UserAlreadyExistsError } from './errors/user-already-exists-error';
 
-interface ExecuteParams {
+interface RegisterUseCaseRequest {
   name: string;
   email: string;
   password: string;
@@ -21,7 +21,7 @@ export class UserRegisterUseCase {
     email,
     name,
     password,
-  }: ExecuteParams): Promise<RegisterUseCaseResponse> {
+  }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     const password_hash = await hash(password, 6);
 
     const userWithSameEmail = await this.usersRepository.findByEmail(email);
