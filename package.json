@@ -19,6 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
+    "test:ui:coverage": "npm run test:ui -- --coverage.enabled=true",
     "test:coverage": "vitest run --coverage"
   },
   "keywords": [
