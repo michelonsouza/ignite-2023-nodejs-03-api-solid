@@ -1,4 +1,4 @@
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -6,7 +6,7 @@ interface User {
   created_at: Date | string;
 }
 
-type UserCreateInput = Omit<User, 'created_at' | 'id'>;
+export type UserCreateInput = Omit<User, 'created_at' | 'id'>;
 
 export interface UsersRepository {
   create(data: UserCreateInput): Promise<User>;
