@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { startOfDay, endOfDay, isAfter, isBefore, parseISO } from 'date-fns';
+
 import {
   CheckIn,
   CheckInCreateInput,
@@ -10,6 +12,32 @@ const MOCKED_PROMISE_TIME = 0;
 
 export class InMemoryCheckInsRepository implements CheckInsRepository {
   public checkIns: CheckIn[] = [];
+
+  findByUserIdOnDate(
+    userId: string,
+    date: string | Date,
+  ): Promise<CheckIn | null> {
+    return new Promise<CheckIn | null>(resolve => {
+      const startOfTheDay = startOfDay(new Date(date));
+      const endOfTheDay = endOfDay(new Date(date));
+
+      const checkInOnSameDay = this.checkIns.find(checkIn => {
+        const checkInDate =
+          checkIn.created_at instanceof Date
+            ? checkIn.created_at
+            : parseISO(checkIn.created_at);
+        const isOnSameDate =
+          isAfter(checkInDate, startOfTheDay) &&
+          isBefore(checkInDate, endOfTheDay);
+
+        return checkIn.user_id === userId && isOnSameDate;
+      });
+
+      setTimeout(() => {
+        resolve(checkInOnSameDay || null);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
 
   async create(data: CheckInCreateInput) {
     return new Promise<CheckIn>(resolve => {
