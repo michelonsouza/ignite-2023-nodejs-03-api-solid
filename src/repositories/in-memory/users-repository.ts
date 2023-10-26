@@ -37,4 +37,14 @@ export class InMemoryUsersRepository implements UsersRepository {
       }, MOCKED_PROMISE_TIME);
     });
   }
+
+  async findById(id: string): Promise<User | null> {
+    return new Promise<User | null>(resolve => {
+      const user = this.users.find(searchUser => searchUser.id === id) || null;
+
+      setTimeout(() => {
+        resolve(user);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
 }
