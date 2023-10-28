@@ -13,7 +13,7 @@ const MOCKED_PROMISE_TIME = 0;
 export class InMemoryCheckInsRepository implements CheckInsRepository {
   public checkIns: CheckIn[] = [];
 
-  findByUserIdOnDate(
+  async findByUserIdOnDate(
     userId: string,
     date: string | Date,
   ): Promise<CheckIn | null> {
@@ -52,6 +52,21 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
         this.checkIns.push(checkIn);
 
         resolve(checkIn);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
+
+  async findManyByUserId(userId: string, page?: number): Promise<CheckIn[]> {
+    return new Promise<CheckIn[]>(resolve => {
+      setTimeout(() => {
+        let checkIns = this.checkIns.filter(
+          checkIn => checkIn.user_id === userId,
+        );
+
+        if (page) {
+          checkIns = checkIns.slice((page - 1) * 20, page * 20);
+        }
+        resolve(checkIns);
       }, MOCKED_PROMISE_TIME);
     });
   }

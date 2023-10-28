@@ -11,9 +11,11 @@ export interface CheckInCreateInput {
   user_id: string;
   gym_id: string;
   validated_at?: Date | string | null;
+  created_at?: Date | string;
 }
 
 export interface CheckInsRepository {
   create(data: CheckInCreateInput): Promise<CheckIn>;
+  findManyByUserId(userId: string, page?: number): Promise<CheckIn[]>;
   findByUserIdOnDate(userId: string, date: Date): Promise<CheckIn | null>;
 }
