@@ -37,4 +37,20 @@ export class InMemoryGymsRepository implements GymsRepository {
       }, MOCKED_PROMISE_TIME);
     });
   }
+
+  async searchMany(query: string, page?: number | undefined): Promise<Gym[]> {
+    let gyms = this.gyms.filter(gym =>
+      gym.title.toLowerCase().includes(query.toLowerCase()),
+    );
+
+    if (page) {
+      gyms = gyms.slice((page - 1) * 20, page * 20);
+    }
+
+    return new Promise<Gym[]>(resolve => {
+      setTimeout(() => {
+        resolve(gyms);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
 }
