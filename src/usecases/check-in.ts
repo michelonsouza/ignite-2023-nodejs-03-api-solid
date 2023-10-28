@@ -2,6 +2,7 @@ import {
   CheckIn,
   CheckInsRepository,
 } from '@/repositories/check-ins-repository';
+import { getDistanceBetweenCoordinates } from '@/utils';
 import { GymsRepository } from '@repositories/gyms-repository';
 
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
@@ -26,11 +27,26 @@ export class CheckInUseCase {
   async execute({
     gymId,
     userId,
+    userLatitude,
+    userLongitude,
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
     const gym = await this.gymsRepository.findById(gymId);
 
     if (!gym) {
       throw new ResourceNotFoundError();
+    }
+
+    const from = { latitude: userLatitude, longitude: userLongitude };
+    const to = {
+      latitude: Number(gym.latitude),
+      longitude: Number(gym.longitude),
+    };
+    const distance = getDistanceBetweenCoordinates(from, to);
+
+    const MAX_DISTANCE_IN_KILOMETERS = 0.1;
+
+    if (distance > MAX_DISTANCE_IN_KILOMETERS) {
+      throw new Error();
     }
 
     const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(

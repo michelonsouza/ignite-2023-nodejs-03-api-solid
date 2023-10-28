@@ -73,16 +73,31 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
   });
 
   it('should not be able to check in twice in the same day', async () => {
-    vi.setSystemTime(new Date(2023, 9, 26, 8, 0, 0));
+    vi.setSystemTime(new Date('2023-10-26T08:00:00.000z'));
+    const gym2Data = { ...gymData, id: faker.string.uuid() };
 
-    const gym = await gymsRepository.create(gymData);
+    const gym1 = await gymsRepository.create(gymData);
+    const gym2 = await gymsRepository.create(gym2Data);
 
     await sut.execute({
       userId: data.user_id,
-      gymId: gym.id,
+      gymId: gym1.id,
       userLatitude: gymData.latitude,
       userLongitude: gymData.longitude,
     });
+
+    await expect(() =>
+      sut.execute({
+        userId: data.user_id,
+        gymId: gym2.id,
+        userLatitude: gymData.latitude,
+        userLongitude: gymData.longitude,
+      }),
+    ).rejects.toBeInstanceOf(Error);
+  });
+
+  it('should not be able to check in on non exists gym', async () => {
+    vi.setSystemTime(new Date('2023-10-26T08:00:00.000z'));
 
     await expect(() =>
       sut.execute({
@@ -116,5 +131,20 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
     });
 
     expect(checkIn.id).toEqual(expect.any(String));
+  });
+
+  it('should not be able to check in on distant gym', async () => {
+    vi.setSystemTime(new Date(2023, 9, 26, 8, 0, 0));
+
+    const gym = await gymsRepository.create(gymData);
+
+    await expect(() =>
+      sut.execute({
+        userId: data.user_id,
+        gymId: gym.id,
+        userLatitude: faker.location.latitude() + 1,
+        userLongitude: faker.location.latitude() + 1,
+      }),
+    ).rejects.toBeInstanceOf(Error);
   });
 });
