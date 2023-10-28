@@ -70,4 +70,15 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
       }, MOCKED_PROMISE_TIME);
     });
   }
+
+  async countByUserId(userId: string): Promise<number> {
+    return new Promise<number>(resolve => {
+      const checkInsCount = this.checkIns.filter(
+        checkIn => checkIn.user_id === userId,
+      ).length;
+      setTimeout(() => {
+        resolve(checkInsCount);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
 }

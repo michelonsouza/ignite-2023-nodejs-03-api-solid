@@ -4,7 +4,7 @@ import { addDays } from 'date-fns';
 import { InMemoryGymsRepository } from '@/repositories/in-memory/gyms-repository';
 import { InMemoryCheckInsRepository } from '@repositories/in-memory/check-ins-repository';
 
-import { FetchUserCheckInsHistoryUseCase } from './fetch-user-check-ins-history';
+import { GetUserMetricsUseCase } from './get-user-metrics';
 
 interface DataType {
   user_id: string;
@@ -24,7 +24,7 @@ interface GymDataType {
 
 let gymsRepository: InMemoryGymsRepository;
 let checkInsRepository: InMemoryCheckInsRepository;
-let sut: FetchUserCheckInsHistoryUseCase;
+let sut: GetUserMetricsUseCase;
 let data: DataType;
 let gymData: GymDataType;
 
@@ -46,11 +46,11 @@ async function makeCheckIns(quantity: number, userId?: string) {
   return { gym, userCheckIns };
 }
 
-describe('🛠️  [USE CASES]: fetch check-ins history', async () => {
+describe('🛠️  [USE CASES]: get user metrics', async () => {
   beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository();
     gymsRepository = new InMemoryGymsRepository();
-    sut = new FetchUserCheckInsHistoryUseCase(checkInsRepository);
+    sut = new GetUserMetricsUseCase(checkInsRepository);
     data = {
       user_id: faker.string.uuid(),
       gym_id: faker.string.uuid(),
@@ -68,28 +68,15 @@ describe('🛠️  [USE CASES]: fetch check-ins history', async () => {
     };
   });
 
-  it('should be able to fetch check-in history', async () => {
-    const { userCheckIns } = await makeCheckIns(3);
+  it('should be able get check-ins count from metrics', async () => {
+    const { userCheckIns } = await makeCheckIns(
+      faker.number.int({ min: 1, max: 30 }),
+    );
 
-    const { checkIns } = await sut.execute({
+    const { checkInsCount } = await sut.execute({
       userId: data.user_id,
     });
 
-    expect(checkIns).toHaveLength(userCheckIns.length);
-    expect(checkIns).toEqual(userCheckIns);
-  });
-
-  it('should be able to fetch paginated check-in history', async () => {
-    const { userCheckIns } = await makeCheckIns(22);
-    const checkIn21 = userCheckIns[20];
-    const checkIn22 = userCheckIns[21];
-
-    const { checkIns } = await sut.execute({
-      userId: data.user_id,
-      page: 2,
-    });
-
-    expect(checkIns).toHaveLength(2);
-    expect(checkIns).toEqual([checkIn21, checkIn22]);
+    expect(checkInsCount).toBe(userCheckIns.length);
   });
 });
