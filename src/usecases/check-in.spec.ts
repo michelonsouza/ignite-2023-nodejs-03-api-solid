@@ -4,6 +4,9 @@ import { InMemoryGymsRepository } from '@/repositories/in-memory/gyms-repository
 import { InMemoryCheckInsRepository } from '@repositories/in-memory/check-ins-repository';
 
 import { CheckInUseCase } from './check-in';
+import { MaxDistanceError } from './errors/max-distance-error';
+import { MaxNumberOfCheckInsError } from './errors/max.number-of-check-ins-error';
+import { ResourceNotFoundError } from './errors/resource-not-found-error';
 
 interface DataType {
   user_id: string;
@@ -15,8 +18,8 @@ interface DataType {
 
 interface GymDataType {
   title: string;
-  description?: string | null;
-  phone?: string | null;
+  description: string | null;
+  phone: string | null;
   latitude: number;
   longitude: number;
 }
@@ -93,7 +96,7 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
         userLatitude: gymData.latitude,
         userLongitude: gymData.longitude,
       }),
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError);
   });
 
   it('should not be able to check in on non exists gym', async () => {
@@ -106,7 +109,7 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
         userLatitude: gymData.latitude,
         userLongitude: gymData.longitude,
       }),
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(ResourceNotFoundError);
   });
 
   it('should not be able to check in twice but in different days', async () => {
@@ -145,6 +148,6 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
         userLatitude: faker.location.latitude() + 1,
         userLongitude: faker.location.latitude() + 1,
       }),
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxDistanceError);
   });
 });

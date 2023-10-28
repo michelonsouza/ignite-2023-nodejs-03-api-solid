@@ -11,11 +11,11 @@ const MOCKED_PROMISE_TIME = 0;
 export class InMemoryGymsRepository implements GymsRepository {
   public gyms: Gym[] = [];
 
-  create(data: GymsCreateInput): Promise<Gym> {
+  async create(data: GymsCreateInput): Promise<Gym> {
     return new Promise<Gym>(resolve => {
       const gym: Gym = {
-        id: randomUUID(),
         ...data,
+        id: data?.id ?? randomUUID(),
         description: data?.description || null,
         phone: data?.phone || null,
       };

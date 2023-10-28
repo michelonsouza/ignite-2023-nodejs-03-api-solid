@@ -3,17 +3,17 @@ export interface Gym {
   title: string;
   description: string | null;
   phone: string | null;
-  latitude: number | string;
-  longitude: number | string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface GymsCreateInput {
   id?: string;
   title: string;
-  description?: string | null;
+  description: string | null;
   phone?: string | null;
-  latitude: number | string;
-  longitude: number | string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface GymsRepository {
