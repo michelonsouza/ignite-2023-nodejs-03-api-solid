@@ -3,6 +3,7 @@ import { fakerPT_BR as faker } from '@faker-js/faker';
 import { InMemoryGymsRepository } from '@/repositories/in-memory/gyms-repository';
 import { InMemoryCheckInsRepository } from '@repositories/in-memory/check-ins-repository';
 
+import { LateCheckInValidationError } from './errors/late-check-in-validation-error';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
 import { ValidateCheckInUseCase } from './validate-check-in';
 
@@ -45,13 +46,13 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
       phone: faker.phone.number(),
     };
 
-    // vi.useFakeTimers({
-    //   toFake: ['Date'],
-    // });
+    vi.useFakeTimers({
+      toFake: ['Date'],
+    });
   });
 
   afterEach(() => {
-    // vi.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should be able to validate the check-in', async () => {
@@ -71,5 +72,24 @@ describe('🛠️  [USE CASES]: check-ins', async () => {
     await expect(() =>
       sut.execute({ checkInId: faker.string.uuid() }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it('should not be able to validate the check-in after 20 minutes of its creation', async () => {
+    vi.setSystemTime(new Date(2023, 10, 30, 18, 0, 0));
+
+    const gym = await gymsRepository.create(gymData);
+
+    const checkInStub = await checkInsRepository.create({
+      user_id: data.user_id,
+      gym_id: gym.id,
+    });
+
+    const TWENTY_MINUTES_IN_MILLISECONDS = 21 * 60 * 1000;
+
+    vi.advanceTimersByTime(TWENTY_MINUTES_IN_MILLISECONDS);
+
+    await expect(() =>
+      sut.execute({ checkInId: checkInStub.id }),
+    ).rejects.toBeInstanceOf(LateCheckInValidationError);
   });
 });
