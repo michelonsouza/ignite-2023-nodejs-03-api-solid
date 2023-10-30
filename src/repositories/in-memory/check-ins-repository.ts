@@ -81,4 +81,32 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
       }, MOCKED_PROMISE_TIME);
     });
   }
+
+  async findById(id: string): Promise<CheckIn | null> {
+    return new Promise<CheckIn | null>(resolve => {
+      setTimeout(() => {
+        const checkIn = this.checkIns.find(
+          findedCheckIn => findedCheckIn.id === id,
+        );
+
+        resolve(checkIn || null);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
+
+  async save(data: CheckIn): Promise<CheckIn> {
+    return new Promise<CheckIn>(resolve => {
+      setTimeout(() => {
+        const checkInIndex = this.checkIns.findIndex(
+          findedCheckIn => findedCheckIn.id === data.id,
+        );
+
+        if (checkInIndex >= 0) {
+          this.checkIns[checkInIndex] = data;
+        }
+
+        resolve(data);
+      }, MOCKED_PROMISE_TIME);
+    });
+  }
 }
